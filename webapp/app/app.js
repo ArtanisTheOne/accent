@@ -1,16 +1,27 @@
-import Application from '@ember/application';
-import Resolver from 'ember-resolver';
-import loadInitializers from 'ember-load-initializers';
-import config from './config/environment';
+require("dotenv").config();
+const discord = require("discord.js");
+const client = new discord.Client();
+const auth = require("./core/auth");
 
-const {modulePrefix, podModulePrefix} = config;
+//
+// Event Listener
+//
 
-class App extends Application {
-  modulePrefix = modulePrefix;
-  podModulePrefix = podModulePrefix;
-  Resolver = Resolver;
+const events = require("./events");
+
+events.listen(client);
+
+//
+// Initialize Bot
+//
+login(auth.token);
+
+function login(token)
+{
+   client.login(token).catch(err =>
+   {
+      console.log(err);
+      console.log(`retrying login...`);
+      setTimeout(login, 5000);
+   });
 }
-
-loadInitializers(App, modulePrefix);
-
-export default App;
